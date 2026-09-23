@@ -1,1 +1,89 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'primeng/resources/themes/lara-dark-indigo/theme.css';
+@import 'primeng/resources/primeng.min.css';
+@import 'primeicons/primeicons.css';
+@import 'leaflet/dist/leaflet.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 font-sans antialiased min-h-screen selection:bg-indigo-500 selection:text-white;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.25) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(88, 28, 135, 0.2) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+}
+
+/* Custom Leaflet Map Callout Badge Styling */
+.custom-leaflet-marker {
+  background: transparent;
+  border: none;
+}
+
+.map-badge-callout {
+  @apply relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white shadow-xl transition-all duration-300 transform hover:scale-110 border border-white/20 backdrop-blur-md cursor-pointer whitespace-nowrap;
+  background: linear-gradient(135deg, rgba(30, 58, 138, 0.85) 0%, rgba(67, 56, 202, 0.85) 100%);
+}
+
+.map-badge-callout::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(67, 56, 202, 0.85);
+}
+
+.map-dialog-popup .leaflet-popup-content-wrapper {
+  background: rgba(15, 23, 42, 0.95) !important;
+  color: #f8fafc !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+}
+
+.map-dialog-popup .leaflet-popup-tip {
+  background: rgba(15, 23, 42, 0.95) !important;
+}
+
+/* Custom PrimeNG Dark Overrides */
+.p-datatable {
+  @apply bg-transparent !important;
+}
+
+.p-datatable .p-datatable-header,
+.p-datatable .p-datatable-footer {
+  @apply bg-slate-900/60 border-slate-800 backdrop-blur-md !important;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  @apply bg-slate-900/80 text-slate-300 border-slate-800 text-xs font-semibold uppercase tracking-wider !important;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+  @apply bg-slate-900/40 text-slate-200 border-slate-800/60 hover:bg-slate-800/50 transition-colors !important;
+}
+
+.p-paginator {
+  @apply bg-slate-900/60 border-slate-800 text-slate-300 rounded-b-xl !important;
+}
+
+.p-paginator .p-paginator-page,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-last,
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-prev {
+  @apply text-slate-300 hover:bg-slate-800 rounded-lg !important;
+}
+
+.p-paginator .p-paginator-page.p-highlight {
+  @apply bg-indigo-600 text-white !important;
+}

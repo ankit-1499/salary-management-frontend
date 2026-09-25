@@ -153,7 +153,7 @@ import { PageResponse } from '../../core/models/page-response.model';
                 </td>
                 <td class="py-3 px-3 sm:px-4">
                   <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">
-                    {{ emp.department?.departmentName || emp.departmentName || 'Engineering' }}
+                    {{ emp.departmentName || 'Engineering' }}
                   </span>
                 </td>
                 <td class="py-3 px-3 sm:px-4 text-slate-300">
@@ -256,7 +256,7 @@ import { PageResponse } from '../../core/models/page-response.model';
             <h3 class="font-bold text-base sm:text-lg text-white">
               {{ selectedEmployee.firstName }} {{ selectedEmployee.lastName }}
             </h3>
-            <p class="text-xs text-indigo-400 font-mono">ID: #{{ selectedEmployee.id }} &bull; {{ selectedEmployee.department?.departmentName || selectedEmployee.departmentName || 'Engineering' }}</p>
+            <p class="text-xs text-indigo-400 font-mono">ID: #{{ selectedEmployee.id }} &bull; {{ selectedEmployee.departmentName || 'Engineering' }}</p>
           </div>
           <button (click)="selectedEmployee = null" class="text-slate-400 hover:text-white text-lg p-1">
             <i class="pi pi-times"></i>

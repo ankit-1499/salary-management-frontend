@@ -175,7 +175,7 @@ Chart.register(...registerables);
                   {{ earner.firstName }} {{ earner.lastName }}
                 </td>
                 <td class="py-3 px-3 sm:px-4 text-slate-300">
-                  {{ earner.department }}
+                  {{ earner.departmentName }}
                 </td>
                 <td class="py-3 px-3 sm:px-4">
                   <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">

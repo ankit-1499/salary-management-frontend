@@ -7,7 +7,7 @@ import { CountryBreakdown, DepartmentBreakdown, SalaryAnalyticsSummary, TopEarne
   providedIn: 'root'
 })
 export class AnalyticsService {
-  private readonly baseUrl = 'http://localhost:8080/api/v1/analytics';
+  private readonly baseUrl = 'https://salary-management-backend-eta.vercel.app/api/v1/analytics';
 
   constructor(private http: HttpClient) {}
 

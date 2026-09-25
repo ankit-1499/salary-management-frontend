@@ -8,7 +8,7 @@ import { PageResponse } from '../models/page-response.model';
   providedIn: 'root'
 })
 export class EmployeeService {
-  private readonly baseUrl = 'http://localhost:8080/api/v1/employees';
+  private readonly baseUrl = 'https://salary-management-backend-eta.vercel.app/api/v1/employees';
 
   constructor(private http: HttpClient) {}
 

@@ -47,4 +47,5 @@ export interface SalaryUpdate {
   otherDeductions: number;
   paidLeavesAllowance: number;
   sickLeavesAllowance: number;
+  status?: string;
 }

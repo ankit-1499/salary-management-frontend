@@ -100,6 +100,7 @@ import { PageResponse } from '../../core/models/page-response.model';
           >
             <option [ngValue]="null">All Statuses</option>
             <option value="ACTIVE">Active</option>
+            <option value="TERMINATED">Terminated</option>
             <option value="INACTIVE">Inactive</option>
           </select>
         </div>
@@ -308,6 +309,13 @@ import { PageResponse } from '../../core/models/page-response.model';
               <label class="block text-slate-400 mb-1">Paid Leaves (Days)</label>
               <input type="number" [(ngModel)]="editForm.paidLeavesAllowance" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-indigo-500" />
             </div>
+            <div>
+              <label class="block text-slate-400 mb-1">Employee Status</label>
+              <select [(ngModel)]="editForm.status" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-semibold focus:outline-none focus:border-indigo-500">
+                <option value="ACTIVE">Active</option>
+                <option value="TERMINATED">Terminated</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -343,7 +351,8 @@ export class EmployeeDirectoryComponent implements OnInit, OnDestroy {
     pfDeduction: 0,
     otherDeductions: 0,
     paidLeavesAllowance: 0,
-    sickLeavesAllowance: 0
+    sickLeavesAllowance: 0,
+    status: 'ACTIVE'
   };
 
   private searchSubject = new Subject<string>();
@@ -445,12 +454,18 @@ export class EmployeeDirectoryComponent implements OnInit, OnDestroy {
     this.seederService.seedData().pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: () => {
+      next: (result) => {
         this.isSeeding = false;
+        this.cdr.markForCheck();
+        this.currentPage = 0;
         this.loadData();
       },
-      error: () => {
+      error: (err) => {
+        console.error('Seeder error:', err);
         this.isSeeding = false;
+        this.cdr.markForCheck();
+        // Still reload data — partial seed may have succeeded
+        this.currentPage = 0;
         this.loadData();
       }
     });
@@ -464,7 +479,8 @@ export class EmployeeDirectoryComponent implements OnInit, OnDestroy {
         pfDeduction: emp.compensation.pfDeduction || 0,
         otherDeductions: emp.compensation.otherDeductions || 0,
         paidLeavesAllowance: emp.compensation.paidLeavesAllowance || 0,
-        sickLeavesAllowance: emp.compensation.sickLeavesAllowance || 0
+        sickLeavesAllowance: emp.compensation.sickLeavesAllowance || 0,
+        status: emp.status || 'ACTIVE'
       };
     }
   }

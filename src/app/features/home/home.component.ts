@@ -129,6 +129,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   summary: SalaryAnalyticsSummary | null = null;
   countryBreakdown: CountryBreakdown[] = [];
   private map!: L.Map;
+  private markersLayerGroup: L.LayerGroup | null = null;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -142,10 +143,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     combineLatest([
       this.analyticsService.getSummary().pipe(
         catchError(() => of({
-          totalCompanyCost: 1100000000,
-          globalAverageSalary: 100000,
-          medianSalary: 99000,
-          activeHeadcount: 10000
+          totalCompanyCost: 0,
+          globalAverageSalary: 0,
+          medianSalary: 0,
+          activeHeadcount: 0
         }))
       ),
       this.analyticsService.getCountryBreakdown().pipe(
@@ -164,7 +165,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.initMap();
-    if (this.countryBreakdown.length >= 0) {
+    if (this.countryBreakdown.length > 0) {
       this.renderMapMarkers();
     }
   }
@@ -192,14 +193,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private renderMapMarkers(): void {
     if (!this.map) return;
 
+    if (this.markersLayerGroup) {
+      this.markersLayerGroup.clearLayers();
+    } else {
+      this.markersLayerGroup = L.layerGroup().addTo(this.map);
+    }
+
     const locations = this.mapService.getAllLocations();
     const breakdownMap = new Map<string, CountryBreakdown>();
     this.countryBreakdown.forEach(b => breakdownMap.set(b.countryCode.toUpperCase(), b));
 
     locations.forEach(loc => {
-      const bData = breakdownMap.get(loc.code);
-      const headcount = bData ? bData.headcount : 1000;
-      const totalCtc = bData ? bData.totalCtcSpend : 110000000;
+      const bData = breakdownMap.get(loc.code.toUpperCase());
+      const headcount = bData ? bData.headcount : 0;
+      const totalCtc = bData ? bData.totalCtcSpend : 0;
+
+      if (headcount === 0) return;
 
       const formattedCtc = (totalCtc / 1000000).toFixed(1) + 'M';
 
@@ -218,7 +227,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         iconAnchor: [60, 32]
       });
 
-      const marker = L.marker([loc.lat, loc.lng], { icon: customIcon }).addTo(this.map);
+      const marker = L.marker([loc.lat, loc.lng], { icon: customIcon });
 
       // Interactive Popup Dialogue Box
       const popupContent = `
@@ -250,6 +259,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         className: 'map-dialog-popup',
         closeButton: true
       });
+
+      this.markersLayerGroup!.addLayer(marker);
     });
   }
 

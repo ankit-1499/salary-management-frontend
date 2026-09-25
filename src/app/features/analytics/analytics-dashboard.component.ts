@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, combineLatest, of } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
-import { NgChartsModule } from 'ng2-charts';
+import { NgChartsModule, BaseChartDirective } from 'ng2-charts';
 import { ChartOptions, ChartType, ChartData, Chart, registerables } from 'chart.js';
 import { AnalyticsService } from '../../core/services/analytics.service';
 import { CountryBreakdown, DepartmentBreakdown, SalaryAnalyticsSummary, TopEarner } from '../../core/models/analytics.model';
@@ -204,6 +204,8 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
   topEarners: TopEarner[] = [];
   selectedCountryLeaderboard = '';
 
+  @ViewChildren(BaseChartDirective) charts?: QueryList<BaseChartDirective>;
+
   // Department Bar Chart
   barChartOptions: ChartOptions = {
     responsive: true,
@@ -271,6 +273,9 @@ export class AnalyticsDashboardComponent implements OnInit, OnDestroy {
         this.topEarners = earners;
       }
       this.cdr.markForCheck();
+      setTimeout(() => {
+        this.charts?.forEach(chart => chart.update());
+      }, 0);
     });
   }
 

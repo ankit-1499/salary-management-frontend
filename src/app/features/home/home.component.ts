@@ -205,11 +205,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       scrollWheelZoom: true
     });
 
-    // Primary: CartoDB Voyager Tile Layer
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 19
+    // Keyless Esri Dark Gray Base Map Tile Layer
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+      maxZoom: 16
     }).addTo(this.map);
 
     setTimeout(() => this.map.invalidateSize(), 200);

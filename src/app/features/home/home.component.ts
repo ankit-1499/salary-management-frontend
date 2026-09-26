@@ -8,6 +8,20 @@ import { AnalyticsService } from '../../core/services/analytics.service';
 import { MapService, CountryLocation } from '../../core/services/map.service';
 import { CountryBreakdown, SalaryAnalyticsSummary } from '../../core/models/analytics.model';
 
+const ISO2_TO_ISO3: Record<string, string> = {
+  US: 'USA', IN: 'IND', GB: 'GBR', JP: 'JPN', DE: 'DEU',
+  CA: 'CAN', AU: 'AUS', BR: 'BRA', FR: 'FRA', SG: 'SGP',
+  ES: 'ESP', IT: 'ITA', NL: 'NLD', SE: 'SWE', CH: 'CHE',
+  MX: 'MEX', KR: 'KOR'
+};
+
+const ISO3_TO_ISO2: Record<string, string> = {
+  USA: 'US', IND: 'IN', GBR: 'GB', JPN: 'JP', DEU: 'DE',
+  CAN: 'CA', AUS: 'AU', BRA: 'BR', FRA: 'FR', SGP: 'SG',
+  ESP: 'ES', ITA: 'IT', NLD: 'NL', SWE: 'SE', CHE: 'CH',
+  MEX: 'MX', KOR: 'KR'
+};
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -107,7 +121,7 @@ import { CountryBreakdown, SalaryAnalyticsSummary } from '../../core/models/anal
       </div>
 
       <!-- Leaflet Interactive World Map Canvas Container -->
-      <div class="relative w-full h-[360px] sm:h-[480px] md:h-[540px] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-800/80 shadow-2xl bg-slate-900/80">
+      <div class="relative w-full h-[380px] sm:h-[480px] md:h-[540px] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-800/80 shadow-2xl bg-slate-900/80">
         <div id="map" class="w-full h-full z-0"></div>
 
         <!-- Responsive Legend Overlay -->
@@ -183,7 +197,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     const isMobile = window.innerWidth < 640;
 
     this.map = L.map('map', {
-      center: isMobile ? [20, 0] : [20, 0],
+      center: [20, 0],
       zoom: isMobile ? 1 : 2,
       minZoom: 1,
       maxZoom: 6,
@@ -191,13 +205,31 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       scrollWheelZoom: true
     });
 
+    // Primary: CartoDB Voyager Tile Layer
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 19
     }).addTo(this.map);
 
-    setTimeout(() => this.map.invalidateSize(), 300);
+    setTimeout(() => this.map.invalidateSize(), 200);
+    setTimeout(() => this.map.invalidateSize(), 600);
+  }
+
+  private getBreakdownDataForLocation(loc: CountryLocation): CountryBreakdown | undefined {
+    if (!this.countryBreakdown || this.countryBreakdown.length === 0) return undefined;
+
+    const code = loc.code.toUpperCase();
+    const iso2 = ISO3_TO_ISO2[code] || code;
+    const iso3 = ISO2_TO_ISO3[code] || code;
+    const name = loc.name.toLowerCase();
+
+    return this.countryBreakdown.find(b => {
+      if (!b.countryCode) return false;
+      const bCode = b.countryCode.toUpperCase();
+      const bName = (b.countryName || '').toLowerCase();
+      return bCode === code || bCode === iso2 || bCode === iso3 || bName === name;
+    });
   }
 
   private renderMapMarkers(): void {
@@ -210,11 +242,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const locations = this.mapService.getAllLocations();
-    const breakdownMap = new Map<string, CountryBreakdown>();
-    this.countryBreakdown.forEach(b => breakdownMap.set(b.countryCode.toUpperCase(), b));
 
     locations.forEach(loc => {
-      const bData = breakdownMap.get(loc.code.toUpperCase());
+      const bData = this.getBreakdownDataForLocation(loc);
       const headcount = bData ? bData.headcount : 0;
       const totalCtc = bData ? bData.totalCtcSpend : 0;
 
